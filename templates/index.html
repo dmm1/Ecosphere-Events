@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Upcoming Events</h2>
+    <ul>
+        {% for event in upcoming_events %}
+            <li>
+                <a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a>
+                ({{ event.start_time|date:"SHORT_DATETIME_FORMAT" }} - {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }})
+            </li>
+        {% empty %}
+            <li>No upcoming events</li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Past Events</h2>
+    <ul>
+        {% for event in past_events %}
+            <li>
+                <a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a>
+                ({{ event.start_time|date:"SHORT_DATETIME_FORMAT" }} - {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }})
+            </li>
+        {% empty %}
+            <li>No past events</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

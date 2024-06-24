@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Calendar View{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Event Calendar</h1>
+    </div>
+    <div id="calendar" class="table-responsive"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        function generateCalendar(year, month) {
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+            var startDay = new Date(year, month, 1).getDay();
+            var calendar = '<table class="table table-bordered"><thead><tr>';
+            var daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            for (var i = 0; i < daysOfWeek.length; i++) {
+                calendar += '<th>' + daysOfWeek[i] + '</th>';
+            }
+            calendar += '</tr></thead><tbody><tr>';
+
+            for (var j = 0; j < startDay; j++) {
+                calendar += '<td></td>';
+            }
+
+            for (var day = 1; day <= daysInMonth; day++) {
+                if ((startDay + day - 1) % 7 == 0 && day != 1) {
+                    calendar += '</tr><tr>';
+                }
+                calendar += '<td>' + day + '</td>';
+            }
+
+            calendar += '</tr></tbody></table>';
+            $('#calendar').html(calendar);
+        }
+
+        var today = new Date();
+        var currentMonth = today.getMonth();
+        var currentYear = today.getFullYear();
+
+        generateCalendar(currentYear, currentMonth);
+
+        var events = [
+            {% for event in events %}
+            {
+                id: {{ event.id }},
+                title: '{{ event.title }}',
+                start_date: '{{ event.start_date }}',
+                end_date: '{{ event.end_date }}'
+            },
+            {% endfor %}
+        ];
+
+        function displayEvents() {
+            events.forEach(function(event) {
+                var startDate = new Date(event.start_date);
+                var endDate = new Date(event.end_date);
+                var cells = $('#calendar td').filter(function() {
+                    var day = parseInt($(this).text(), 10);
+                    var cellDate = new Date(currentYear, currentMonth, day);
+                    return cellDate >= startDate && cellDate <= endDate;
+                });
+                cells.each(function() {
+                    var popoverContent = '<div><strong>' + event.title + '</strong><br><a href="/events/' + event.id + '/" class="btn btn-primary btn-sm mt-2">Visit</a></div>';
+                    $(this).append('<br><span class="badge bg-primary event" data-bs-toggle="popover" data-bs-trigger="manual" title="' + event.title + '" data-bs-content="' + popoverContent.replace(/"/g, '&quot;') + '" data-id="' + event.id + '">' + event.title + '</span>');
+                });
+            });
+        }
+
+        displayEvents();
+
+        // Initialize Bootstrap popovers with manual trigger
+        $('[data-bs-toggle="popover"]').popover({
+            html: true,
+            trigger: 'manual',
+            placement: 'top'
+        }).on('mouseenter', function () {
+            var _this = this;
+            $(this).popover('show');
+            $('.popover').on('mouseleave', function () {
+                $(_this).popover('hide');
+            });
+        }).on('mouseleave', function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$('.popover:hover').length) {
+                    $(_this).popover('hide');
+                }
+            }, 300);
+        });
+    });
+</script>
+{% endblock %}
