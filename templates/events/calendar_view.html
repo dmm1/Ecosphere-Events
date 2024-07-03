@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load l10n %}
+{% extends 'events/events_base.html' %}
 
 {% block title %}Calendar View{% endblock %}
 
-{% block content %}
+{% block events_content %}
+{% load static %}
+{% load l10n %}
+
 <div class="container">
     <div class="page-header">
         <h1>Event Calendar</h1>
@@ -14,6 +15,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ block.super }}
 <script>
     $(document).ready(function() {
         function generateCalendar(year, month) {
@@ -69,7 +71,7 @@
                     return cellDate >= startDate && cellDate <= endDate;
                 });
                 cells.each(function() {
-                    var popoverContent = '<div><strong>' + event.title + '</strong><br><a href="/events/' + event.id + '/" class="btn btn-primary btn-sm mt-2">Visit</a></div>';
+                    var popoverContent = '<div><strong>' + event.title + '</strong><br><a href="/events/events/' + event.id + '/" class="btn btn-primary btn-sm mt-2">Visit</a></div>';
                     $(this).append('<br><span class="badge bg-primary event" data-bs-toggle="popover" data-bs-trigger="manual" title="' + event.title + '" data-bs-content="' + popoverContent.replace(/"/g, '&quot;') + '" data-id="' + event.id + '">' + event.title + '</span>');
                 });
             });

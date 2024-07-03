@@ -1,0 +1,36 @@
+{% extends 'events/events_base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Home{% endblock %}
+
+{% block events_content %}
+<div class="container mt-4">
+    <section>
+        <h2>Upcoming Events index.html</h2>
+        <ul class="list-group">
+            {% for event in upcoming_events %}
+                <li class="list-group-item">
+                    <a href="{% url 'events:event_detail' event.pk %}">{{ event.title }}</a>
+                    <span class="text-muted">({{ event.start_time|date:"SHORT_DATETIME_FORMAT" }} - {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }})</span>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No upcoming events</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="mt-4">
+        <h2>Past Events</h2>
+        <ul class="list-group">
+            {% for event in past_events %}
+                <li class="list-group-item">
+                    <a href="{% url 'events:event_detail' event.pk %}">{{ event.title }}</a>
+                    <span class="text-muted">({{ event.start_time|date:"SHORT_DATETIME_FORMAT" }} - {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }})</span>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No past events</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

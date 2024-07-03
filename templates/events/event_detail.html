@@ -1,0 +1,15 @@
+{% extends 'events/events_base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block events_content %}
+<div class="container mt-4">
+    <h1>{{ event.title }}</h1>
+    <p>{{ event.description }}</p>
+    <p>{{ event.start_time|date:"SHORT_DATETIME_FORMAT" }} - {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }}</p>
+    <a href="{% url 'events:event_update' event.pk %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-danger">Delete</a>
+</div>
+{% endblock %}
